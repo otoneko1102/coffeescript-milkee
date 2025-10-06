@@ -7,8 +7,7 @@
     "milkee": "dist/cli.js"
   },
   "scripts": {
-    "build": "coffee --output dist/ --compile src/",
-    "prepublishOnly": "npm run build"
+    "build": "coffee --output dist/ --compile src/"
   },
   "repository": {
     "type": "git",
