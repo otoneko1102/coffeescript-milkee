@@ -1,2 +1,2 @@
+*.coffee linguist-language=CoffeeScript
 dist/* linguist-generated
-node_modules/* linguist-vendored
