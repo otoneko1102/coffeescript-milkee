@@ -1,6 +1,6 @@
 {
   "name": "milkee",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A simple CoffeeScript build tool with coffee.config.js",
   "main": "dist/cli.js",
   "bin": {
