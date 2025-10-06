@@ -1,0 +1,40 @@
+{
+  "name": "milkee",
+  "version": "0.0.0",
+  "description": "A simple CoffeeScript build tool with coffee.config.js",
+  "main": "dist/cli.js",
+  "bin": {
+    "milkee": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "coffee --output dist/ --compile src/",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otoneko1102/coffeescript-milkee.git"
+  },
+  "keywords": [
+    "coffee",
+    "coffeescript",
+    "build",
+    "builder",
+    "compile",
+    "compiler",
+    "tool",
+    "cli"
+  ],
+  "author": "otoneko.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/otoneko1102/coffeescript-milkee/issues"
+  },
+  "homepage": "https://github.com/otoneko1102/coffeescript-milkee#readme",
+  "dependencies": {
+    "consola": "^3.4.2",
+    "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "coffeescript": "^2.7.0"
+  }
+}
