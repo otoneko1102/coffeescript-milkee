@@ -1,41 +1,47 @@
-name: Release
+name: Manual Publish to npm
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
 
 jobs:
-  publish:
-    name: Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        node-version: [20.x]
-        os: [ubuntu-latest]
-
+  publish-npm:
+    runs-on: ubuntu-latest
     permissions:
-      contents: read
       id-token: write
-
+      contents: write
     steps:
-      - name: Checkout 🔔
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ matrix.node-version }} 🔧
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
 
-      - name: Install dependencies 🧹
-        run: npm ci
+      - name: Install, Build, and Test
+        run: |
+          npm ci
+          npm run build
+          npm test
 
-      - name: Build 🔨
-        run: npm run build
+      - name: Commit dist directory (if changed)
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist
+          # The following command creates a commit ONLY if there are staged changes.
+          git diff --staged --quiet || git commit -m "chore: update build artifacts"
+          git push
 
-      - name: Publish 🎁
+      - name: Publish to npm
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create and Push Git Tag
+        run: |
+          # This step now runs after the dist commit, ensuring the tag points to the correct commit.
+          VERSION=$(node -p "require('./package.json').version")
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
