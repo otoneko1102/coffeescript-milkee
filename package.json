@@ -7,6 +7,7 @@
     "milkee": "dist/cli.js"
   },
   "scripts": {
+    "test": "echo \"No test specified\" && exit 0",
     "build": "coffee --output dist/ --compile src/"
   },
   "repository": {
