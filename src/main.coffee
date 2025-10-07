@@ -8,61 +8,63 @@ path = require 'path'
 pkg = require '../package.json'
 CWD = process.cwd()
 CONFIG_FILE = 'coffee.config.js'
-CONFIG_PATH = path.join(CWD, CONFIG_FILE)
+CONFIG_PATH = path.join CWD, CONFIG_FILE
 
 setup = () ->
-  if fs.existsSync(CONFIG_PATH)
+  if fs.existsSync CONFIG_PATH
     consola.warn "`#{CONFIG_FILE}` already exists in this directory."
     return
 
   try
-    TEMPLATE_PATH = path.join(__dirname, '..', 'temp', 'coffee.config.js')
-    CONFIG_TEMPLATE = fs.readFileSync(TEMPLATE_PATH, 'utf-8')
-    fs.writeFileSync(CONFIG_PATH, CONFIG_TEMPLATE)
+    TEMPLATE_PATH = path.join __dirname, '..', 'temp', 'coffee.config.js'
+    CONFIG_TEMPLATE = fs.readFileSync TEMPLATE_PATH, 'utf-8'
+    fs.writeFileSync CONFIG_PATH, CONFIG_TEMPLATE
     consola.success "Successfully created `#{CONFIG_FILE}`."
   catch error
     consola.error "Failed to create `#{CONFIG_FILE}`:", error
     consola.info "Template file may be missing from the package installation at `#{TEMPLATE_PATH}`"
 
 compile = () ->
-  unless fs.existsSync(CONFIG_PATH)
+  unless fs.existsSync CONFIG_PATH
     consola.error "`#{CONFIG_FILE}` not found in this directory: #{CWD}"
     consola.info 'Please run `milkee --setup` to create a configuration file.'
-    process.exit(1)
+    process.exit 1
 
   try
     config = require CONFIG_PATH
 
     unless config.entry and config.output
       consola.error '`entry` and `output` properties are required in your configuration.'
-      process.exit(1)
+      process.exit 1
 
     options = config.options or {}
     commandParts = ['coffee']
 
     if options.join
-      commandParts.push('--join')
-      commandParts.push("\"#{config.output}\"")
+      commandParts.push '--join'
+      commandParts.push "\"#{config.output}\""
     else
-      commandParts.push('--output')
-      commandParts.push("\"#{config.output}\"")
+      commandParts.push '--output'
+      commandParts.push "\"#{config.output}\""
 
     delete options.join
 
     otherOptionStrings = []
     for key, value of options
       if value is true
-        otherOptionStrings.push("--#{key}")
+        otherOptionStrings.push "--#{key}"
       else if value isnt false
-        otherOptionStrings.push("--#{key} \"#{value}\"")
+        otherOptionStrings.push "--#{key} \"#{value}\""
 
     if otherOptionStrings.length > 0
-        commandParts.push(otherOptionStrings.join(' '))
+        commandParts.push otherOptionStrings.join ' '
 
-    commandParts.push('--compile')
-    commandParts.push("\"#{config.entry}\"")
+    commandParts.push '--compile'
+    commandParts.push "\"#{config.entry}\""
 
-    command = commandParts.filter(Boolean).join(' ')
+    command = commandParts
+      .filter Boolean
+      .join ' '
 
     consola.start "Compiling from `#{config.entry}` to `#{config.output}`..."
     consola.info "Executing: #{command}"
@@ -71,7 +73,7 @@ compile = () ->
       if error
         consola.error 'Compilation failed:', error
         if stderr then process.stderr.write stderr
-        process.exit(1)
+        process.exit 1
         return
 
       consola.success 'Compilation completed successfully!'
@@ -80,25 +82,25 @@ compile = () ->
 
   catch error
     consola.error 'Failed to load or execute configuration:', error
-    process.exit(1)
+    process.exit 1
 
-argv = yargs(hideBin(process.argv))
-  .scriptName('milkee')
-  .usage('$0 [command]')
-  .option('setup', {
+argv = yargs hideBin process.argv
+  .scriptName 'milkee'
+  .usage '$0 [command]'
+  .option 'setup', {
     alias: 's',
     describe: 'Generate a default coffee.config.js',
     type: 'boolean'
-  })
-  .option('compile', {
+  }
+  .option 'compile', {
     alias: 'c',
     describe: 'Compile CoffeeScript based on coffee.config.js (default)',
     type: 'boolean'
-  })
-  .version('version', pkg.version)
-  .alias('v', 'version')
-  .help('help')
-  .alias('h', 'help')
+  }
+  .version 'version', pkg.version
+  .alias 'v', 'version'
+  .help 'help'
+  .alias 'h', 'help'
   .argv
 
 if argv.setup
