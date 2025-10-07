@@ -41,7 +41,7 @@
   };
 
   compile = function() {
-    var command, commandParts, config, error, key, options, otherOptionStrings, value;
+    var command, commandParts, compilerProcess, config, error, i, item, itemPath, items, len, options, otherOptionStrings, targetDir;
     if (!fs.existsSync(CONFIG_PATH)) {
       consola.error(`\`${CONFIG_FILE}\` not found in this directory: ${CWD}`);
       consola.info('Please run `milkee --setup` to create a configuration file.');
@@ -64,13 +64,43 @@
       }
       delete options.join;
       otherOptionStrings = [];
-      for (key in options) {
-        value = options[key];
-        if (value === true) {
-          otherOptionStrings.push(`--${key}`);
-        } else if (value !== false) {
-          otherOptionStrings.push(`--${key} \"${value}\"`);
+      if (options.refresh) {
+        targetDir = path.join(CWD, config.output);
+        if (!fs.existsSync(targetDir)) {
+          consola.info("Refresh skipped.");
+        } else {
+          items = fs.readdirSync(targetDir);
+          for (i = 0, len = items.length; i < len; i++) {
+            item = items[i];
+            itemPath = path.join(targetDir, item);
+            fs.rmSync(itemPath, {
+              recursive: true,
+              force: true
+            });
+          }
+          consola.success("Refreshed!");
         }
+      }
+      if (options.bare) {
+        otherOptionStrings.push("--bare");
+      }
+      if (options.map) {
+        otherOptionStrings.push('--map');
+      }
+      if (options.inlineMap) {
+        otherOptionStrings.push('--inline-map');
+      }
+      if (options.noHeader) {
+        otherOptionStrings.push('--no-header');
+      }
+      if (options.transpile) {
+        otherOptionStrings.push('--transpile');
+      }
+      if (options.literate) {
+        otherOptionStrings.push('--literate');
+      }
+      if (options.watch) {
+        otherOptionStrings.push('--watch');
       }
       if (otherOptionStrings.length > 0) {
         commandParts.push(otherOptionStrings.join(' '));
@@ -78,25 +108,35 @@
       commandParts.push('--compile');
       commandParts.push(`\"${config.entry}\"`);
       command = commandParts.filter(Boolean).join(' ');
-      consola.start(`Compiling from \`${config.entry}\` to \`${config.output}\`...`);
+      if (options.watch) {
+        consola.start(`Watching for changes in \`${config.entry}\`...`);
+      } else {
+        consola.start(`Compiling from \`${config.entry}\` to \`${config.output}\`...`);
+      }
       consola.info(`Executing: ${command}`);
-      return exec(command, function(error, stdout, stderr) {
-        if (error) {
-          consola.error('Compilation failed:', error);
-          if (stderr) {
-            process.stderr.write(stderr);
+      compilerProcess = exec(command, function(error, stdout, stderr) {
+        if (!options.watch) {
+          if (error) {
+            consola.error('Compilation failed:', error);
+            if (stderr) {
+              process.stderr.write(stderr);
+            }
+            process.exit(1);
+            return;
           }
-          process.exit(1);
-          return;
         }
         consola.success('Compilation completed successfully!');
         if (stdout) {
           process.stdout.write(stdout);
         }
-        if (stderr) {
+        if (stderr && !error) {
           return process.stderr.write(stderr);
         }
       });
+      if (options.watch) {
+        compilerProcess.stdout.pipe(process.stdout);
+        return compilerProcess.stderr.pipe(process.stderr);
+      }
     } catch (error1) {
       error = error1;
       consola.error('Failed to load or execute configuration:', error);
