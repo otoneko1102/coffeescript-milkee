@@ -13,7 +13,9 @@ CONFIG_PATH = path.join CWD, CONFIG_FILE
 setup = () ->
   if fs.existsSync CONFIG_PATH
     consola.warn "`#{CONFIG_FILE}` already exists in this directory."
-    return
+    check = await consola.prompt "Do you want to reset `coffee.config.js`?", type: "confirm"
+    if check isnt true
+      return
 
   try
     TEMPLATE_PATH = path.join __dirname, '..', 'temp', 'coffee.config.js'
