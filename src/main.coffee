@@ -38,6 +38,8 @@ compile = () ->
       process.exit 1
 
     options = config.options or {}
+    milkee = config.milkee or {}
+    milkeeOptions = config.milkee.options or {}
     commandParts = ['coffee']
 
     if options.join
@@ -47,11 +49,9 @@ compile = () ->
       commandParts.push '--output'
       commandParts.push "\"#{config.output}\""
 
-    delete options.join
-
     otherOptionStrings = []
 
-    if options.refresh
+    if milkeeOptions.refresh
       targetDir = path.join(CWD, config.output)
       unless fs.existsSync(targetDir)
         consola.info "Refresh skipped."
