@@ -10,14 +10,16 @@ module.exports = {
 
   // (Optional) Additional options for the CoffeeScript compiler.
   // See `coffee --help` for all available options.
+  // Web: https://coffeescript.org/annotated-source/command.html
   options: {
-    // Join all scripts into a single file.
+    // The following options are supported:
+    // bare: false,
     // join: false,
-
-    // Add a header to the top of the compiled JavaScript.
-    // header: false,
-
-    // Compile without the top-level function wrapper.
-    // bare: true
-  }
+    // map: false,
+    // inlineMap: false,
+    // noHeader: false,
+    // transpile: false,
+    // literate: false,
+    // watch: false,
+  },
 };

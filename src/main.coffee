@@ -50,11 +50,32 @@ compile = () ->
     delete options.join
 
     otherOptionStrings = []
-    for key, value of options
-      if value is true
-        otherOptionStrings.push "--#{key}"
-      else if value isnt false
-        otherOptionStrings.push "--#{key} \"#{value}\""
+
+    if options.refresh
+      targetDir = path.join(CWD, config.output)
+      unless fs.existsSync(targetDir)
+        consola.info "Refresh skipped."
+      else
+        items = fs.readdirSync(targetDir)
+        for item in items
+          itemPath = path.join(targetDir, item)
+          fs.rmSync(itemPath, { recursive: true, force: true })
+        consola.success "Refreshed!"
+
+    if options.bare
+      otherOptionStrings.push "--bare"
+    if options.map
+      otherOptionStrings.push '--map'
+    if options.inlineMap
+      otherOptionStrings.push '--inline-map'
+    if options.noHeader
+      otherOptionStrings.push '--no-header'
+    if options.transpile
+      otherOptionStrings.push '--transpile'
+    if options.literate
+      otherOptionStrings.push '--literate'
+    if options.watch
+      otherOptionStrings.push '--watch'
 
     if otherOptionStrings.length > 0
         commandParts.push otherOptionStrings.join ' '
@@ -66,19 +87,28 @@ compile = () ->
       .filter Boolean
       .join ' '
 
-    consola.start "Compiling from `#{config.entry}` to `#{config.output}`..."
+    if options.watch
+      consola.start "Watching for changes in `#{config.entry}`..."
+    else
+      consola.start "Compiling from `#{config.entry}` to `#{config.output}`..."
+
     consola.info "Executing: #{command}"
 
-    exec command, (error, stdout, stderr) ->
-      if error
-        consola.error 'Compilation failed:', error
-        if stderr then process.stderr.write stderr
-        process.exit 1
-        return
+    compilerProcess = exec command, (error, stdout, stderr) ->
+      unless options.watch
+        if error
+          consola.error 'Compilation failed:', error
+          if stderr then process.stderr.write stderr
+          process.exit 1
+          return
 
       consola.success 'Compilation completed successfully!'
       if stdout then process.stdout.write stdout
-      if stderr then process.stderr.write stderr
+      if stderr and not error then process.stderr.write stderr
+
+    if options.watch
+      compilerProcess.stdout.pipe process.stdout
+      compilerProcess.stderr.pipe process.stderr
 
   catch error
     consola.error 'Failed to load or execute configuration:', error
