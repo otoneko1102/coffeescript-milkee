@@ -25,6 +25,8 @@ module.exports = {
     options: {
       // Before compiling, reset the directory.
       // refresh: false,
+      // Before compiling, confirm "Do you want to Continue?"
+      // confirm: false
     },
     plugins: []
   },

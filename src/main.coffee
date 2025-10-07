@@ -10,6 +10,7 @@ CWD = process.cwd()
 CONFIG_FILE = 'coffee.config.js'
 CONFIG_PATH = path.join CWD, CONFIG_FILE
 
+# async
 setup = () ->
   if fs.existsSync CONFIG_PATH
     consola.warn "`#{CONFIG_FILE}` already exists in this directory."
@@ -54,29 +55,39 @@ compile = () ->
     otherOptionStrings = []
 
     if milkeeOptions.refresh
-      targetDir = path.join(CWD, config.output)
-      unless fs.existsSync(targetDir)
+      targetDir = path.join CWD, config.output
+      unless fs.existsSync targetDir
         consola.info "Refresh skipped."
       else
-        items = fs.readdirSync(targetDir)
+        consola.info "Executing: Refresh"
+
+        # Refresh
+        items = fs.readdirSync targetDir
         for item in items
-          itemPath = path.join(targetDir, item)
-          fs.rmSync(itemPath, { recursive: true, force: true })
+          itemPath = path.join targetDir, item
+          fs.rmSync itemPath, recursive: true, force: true
         consola.success "Refreshed!"
 
     if options.bare
       otherOptionStrings.push "--bare"
+      consola.info "Option `bare` is selected."
     if options.map
       otherOptionStrings.push '--map'
+      consola.info "Option `map` is selected."
     if options.inlineMap
       otherOptionStrings.push '--inline-map'
+      consola.info "Option `inline-map` is selected."
     if options.noHeader
       otherOptionStrings.push '--no-header'
+      consola.info "Option `no-header` is selected."
     if options.transpile
       otherOptionStrings.push '--transpile'
+      consola.info "Option `transpile` is selected."
     if options.literate
       otherOptionStrings.push '--literate'
+      consola.info "Option `literate` is selected."
     if options.watch
+      consola.info "Option `watch` is selected."
       otherOptionStrings.push '--watch'
 
     if otherOptionStrings.length > 0
@@ -88,6 +99,11 @@ compile = () ->
     command = commandParts
       .filter Boolean
       .join ' '
+
+    if milkeeOptions.confirm
+      toContinue = await consola.prompt "Do you want to continue?"
+      if toContinue isnt true
+        return
 
     if options.watch
       consola.start "Watching for changes in `#{config.entry}`..."
