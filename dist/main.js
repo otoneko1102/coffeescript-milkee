@@ -22,17 +22,22 @@
 
   CONFIG_PATH = path.join(CWD, CONFIG_FILE);
 
-  setup = function() {
-    var CONFIG_TEMPLATE, TEMPLATE_PATH, error;
+  setup = async function() {
+    var CONFIG_TEMPLATE, TEMPLATE_PATH, check, error;
     if (fs.existsSync(CONFIG_PATH)) {
       consola.warn(`\`${CONFIG_FILE}\` already exists in this directory.`);
-      return;
+      check = (await consola.prompt("Do you want to reset `coffee.config.js`?", {
+        type: "confirm"
+      }));
+      if (check !== true) {
+        return;
+      }
     }
     try {
       TEMPLATE_PATH = path.join(__dirname, '..', 'temp', 'coffee.config.js');
       CONFIG_TEMPLATE = fs.readFileSync(TEMPLATE_PATH, 'utf-8');
       fs.writeFileSync(CONFIG_PATH, CONFIG_TEMPLATE);
-      return consola.success(`Successfully created \`${CONFIG_FILE}\`.`);
+      return consola.success(`Successfully created \`${CONFIG_FILE}\`!`);
     } catch (error1) {
       error = error1;
       consola.error(`Failed to create \`${CONFIG_FILE}\`:`, error);
