@@ -135,7 +135,9 @@
       commandParts.push(`\"${config.entry}\"`);
       command = commandParts.filter(Boolean).join(' ');
       if (milkeeOptions.confirm) {
-        toContinue = (await consola.prompt("Do you want to continue?"));
+        toContinue = (await consola.prompt("Do you want to continue?", {
+          type: "confirm"
+        }));
         if (toContinue !== true) {
           return;
         }
