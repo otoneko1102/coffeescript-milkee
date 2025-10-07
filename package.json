@@ -1,6 +1,6 @@
 {
   "name": "milkee",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple CoffeeScript build tool with coffee.config.js",
   "main": "dist/cli.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
-    "build": "coffee --output dist/ --compile src/"
+    "build": "coffee --bare --no-header --output dist/ --compile src/"
   },
   "repository": {
     "type": "git",
