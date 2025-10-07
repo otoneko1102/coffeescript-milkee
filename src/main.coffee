@@ -10,28 +10,28 @@ CWD = process.cwd()
 CONFIG_FILE = 'coffee.config.js'
 CONFIG_PATH = path.join(CWD, CONFIG_FILE)
 
-TEMPLATE_PATH = path.join(__dirname, '..', 'temp', 'coffee.config.js')
-
 setup = () ->
   if fs.existsSync(CONFIG_PATH)
     consola.warn "`#{CONFIG_FILE}` already exists in this directory."
     return
 
   try
+    TEMPLATE_PATH = path.join(__dirname, '..', 'temp', 'coffee.config.js')
+    CONFIG_TEMPLATE = fs.readFileSync(TEMPLATE_PATH, 'utf-8')
     fs.writeFileSync(CONFIG_PATH, CONFIG_TEMPLATE)
     consola.success "Successfully created `#{CONFIG_FILE}`."
   catch error
     consola.error "Failed to create `#{CONFIG_FILE}`:", error
+    consola.info "Template file may be missing from the package installation at `#{TEMPLATE_PATH}`"
 
-compile = async () ->
+compile = () ->
   unless fs.existsSync(CONFIG_PATH)
-    consola.error "`#{CONFIG_FILE}` not found."
+    consola.error "`#{CONFIG_FILE}` not found in this directory: #{CWD}"
     consola.info 'Please run `milkee --setup` to create a configuration file.'
     process.exit(1)
 
   try
-    configPathUrl = path.toFileUrl(CONFIG_PATH).href
-    { default: config } = await import(configPathUrl)
+    config = require CONFIG_PATH
 
     unless config.entry and config.output
       consola.error '`entry` and `output` properties are required in your configuration.'
