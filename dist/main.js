@@ -24,24 +24,34 @@
 
   // async
   setup = async function() {
-    var CONFIG_TEMPLATE, TEMPLATE_PATH, check, error;
+    var CONFIG_TEMPLATE, TEMPLATE_PATH, check, error, pstat, stat;
+    pstat = "created";
+    stat = "create";
     if (fs.existsSync(CONFIG_PATH)) {
       consola.warn(`\`${CONFIG_FILE}\` already exists in this directory.`);
       check = (await consola.prompt("Do you want to reset `coffee.config.js`?", {
         type: "confirm"
       }));
       if (check !== true) {
+        consola.info("Cancelled.");
         return;
+      } else {
+        fs.rmSync(CONFIG_PATH, {
+          recursive: true,
+          force: true
+        });
+        pstat = "reset";
+        stat = "reset";
       }
     }
     try {
       TEMPLATE_PATH = path.join(__dirname, '..', 'temp', 'coffee.config.js');
       CONFIG_TEMPLATE = fs.readFileSync(TEMPLATE_PATH, 'utf-8');
       fs.writeFileSync(CONFIG_PATH, CONFIG_TEMPLATE);
-      return consola.success(`Successfully created \`${CONFIG_FILE}\`!`);
+      return consola.success(`Successfully ${pstat} \`${CONFIG_FILE}\`!`);
     } catch (error1) {
       error = error1;
-      consola.error(`Failed to create \`${CONFIG_FILE}\`:`, error);
+      consola.error(`Failed to ${stat} \`${CONFIG_FILE}\`:`, error);
       return consola.info(`Template file may be missing from the package installation at \`${TEMPLATE_PATH}\``);
     }
   };
