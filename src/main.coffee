@@ -108,7 +108,7 @@ compile = () ->
       .join ' '
 
     if milkeeOptions.confirm
-      toContinue = await consola.prompt "Do you want to continue?"
+      toContinue = await consola.prompt "Do you want to continue?", type: "confirm"
       if toContinue isnt true
         return
 
