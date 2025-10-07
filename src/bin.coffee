@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+`#!/usr/bin/env node`
 
 yargs = require 'yargs'
 { hideBin } = require 'yargs/helpers'
