@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
-    "build": "coffee --bare --no-header --output dist/ --compile src/"
+    "build": "coffee --output dist/ --compile src/"
   },
   "repository": {
     "type": "git",
