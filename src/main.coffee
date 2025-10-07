@@ -19,7 +19,7 @@ setup = () ->
     TEMPLATE_PATH = path.join __dirname, '..', 'temp', 'coffee.config.js'
     CONFIG_TEMPLATE = fs.readFileSync TEMPLATE_PATH, 'utf-8'
     fs.writeFileSync CONFIG_PATH, CONFIG_TEMPLATE
-    consola.success "Successfully created `#{CONFIG_FILE}`."
+    consola.success "Successfully created `#{CONFIG_FILE}`!"
   catch error
     consola.error "Failed to create `#{CONFIG_FILE}`:", error
     consola.info "Template file may be missing from the package installation at `#{TEMPLATE_PATH}`"
