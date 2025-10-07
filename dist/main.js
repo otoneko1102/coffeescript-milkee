@@ -22,6 +22,7 @@
 
   CONFIG_PATH = path.join(CWD, CONFIG_FILE);
 
+  // async
   setup = async function() {
     var CONFIG_TEMPLATE, TEMPLATE_PATH, check, error;
     if (fs.existsSync(CONFIG_PATH)) {
@@ -45,8 +46,8 @@
     }
   };
 
-  compile = function() {
-    var command, commandParts, compilerProcess, config, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, targetDir;
+  compile = async function() {
+    var command, commandParts, compilerProcess, config, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, targetDir, toContinue;
     if (!fs.existsSync(CONFIG_PATH)) {
       consola.error(`\`${CONFIG_FILE}\` not found in this directory: ${CWD}`);
       consola.info('Please run `milkee --setup` to create a configuration file.');
@@ -75,6 +76,8 @@
         if (!fs.existsSync(targetDir)) {
           consola.info("Refresh skipped.");
         } else {
+          consola.info("Executing: Refresh");
+          // Refresh
           items = fs.readdirSync(targetDir);
           for (i = 0, len = items.length; i < len; i++) {
             item = items[i];
@@ -89,23 +92,30 @@
       }
       if (options.bare) {
         otherOptionStrings.push("--bare");
+        consola.info("Option `bare` is selected.");
       }
       if (options.map) {
         otherOptionStrings.push('--map');
+        consola.info("Option `map` is selected.");
       }
       if (options.inlineMap) {
         otherOptionStrings.push('--inline-map');
+        consola.info("Option `inline-map` is selected.");
       }
       if (options.noHeader) {
         otherOptionStrings.push('--no-header');
+        consola.info("Option `no-header` is selected.");
       }
       if (options.transpile) {
         otherOptionStrings.push('--transpile');
+        consola.info("Option `transpile` is selected.");
       }
       if (options.literate) {
         otherOptionStrings.push('--literate');
+        consola.info("Option `literate` is selected.");
       }
       if (options.watch) {
+        consola.info("Option `watch` is selected.");
         otherOptionStrings.push('--watch');
       }
       if (otherOptionStrings.length > 0) {
@@ -114,6 +124,12 @@
       commandParts.push('--compile');
       commandParts.push(`\"${config.entry}\"`);
       command = commandParts.filter(Boolean).join(' ');
+      if (milkeeOptions.confirm) {
+        toContinue = (await consola.prompt("Do you want to continue?"));
+        if (toContinue !== true) {
+          return;
+        }
+      }
       if (options.watch) {
         consola.start(`Watching for changes in \`${config.entry}\`...`);
       } else {
