@@ -41,7 +41,7 @@
   };
 
   compile = function() {
-    var command, commandParts, compilerProcess, config, error, i, item, itemPath, items, len, options, otherOptionStrings, targetDir;
+    var command, commandParts, compilerProcess, config, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, targetDir;
     if (!fs.existsSync(CONFIG_PATH)) {
       consola.error(`\`${CONFIG_FILE}\` not found in this directory: ${CWD}`);
       consola.info('Please run `milkee --setup` to create a configuration file.');
@@ -54,6 +54,8 @@
         process.exit(1);
       }
       options = config.options || {};
+      milkee = config.milkee || {};
+      milkeeOptions = config.milkee.options || {};
       commandParts = ['coffee'];
       if (options.join) {
         commandParts.push('--join');
@@ -62,9 +64,8 @@
         commandParts.push('--output');
         commandParts.push(`\"${config.output}\"`);
       }
-      delete options.join;
       otherOptionStrings = [];
-      if (options.refresh) {
+      if (milkeeOptions.refresh) {
         targetDir = path.join(CWD, config.output);
         if (!fs.existsSync(targetDir)) {
           consola.info("Refresh skipped.");
