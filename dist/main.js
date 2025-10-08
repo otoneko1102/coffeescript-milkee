@@ -98,6 +98,13 @@
       milkee = config.milkee || {};
       milkeeOptions = config.milkee.options || {};
       commandParts = ['coffee'];
+      if (options.join) {
+        commandParts.push('--join');
+        commandParts.push(`\"${config.output}\"`);
+      } else {
+        commandParts.push('--output');
+        commandParts.push(`\"${config.output}\"`);
+      }
       summary = [];
       summary.push(`Entry: \`${config.entry}\``);
       summary.push(`Output: \`${config.output}\``);
@@ -154,13 +161,6 @@
         if (!toContinue) {
           return;
         }
-      }
-      if (options.join) {
-        commandParts.push('--join');
-        commandParts.push(`\"${config.output}\"`);
-      } else {
-        commandParts.push('--output');
-        commandParts.push(`\"${config.output}\"`);
       }
       delete options.join;
       if (milkeeOptions.refresh) {
