@@ -48,6 +48,7 @@
   // async
   setup = async function() {
     var CONFIG_TEMPLATE, TEMPLATE_PATH, check, error, pstat, stat;
+    checkCoffee();
     pstat = "created";
     stat = "create";
     if (fs.existsSync(CONFIG_PATH)) {
@@ -81,6 +82,7 @@
 
   compile = async function() {
     var command, commandParts, compilerProcess, config, enabledOptons, enabledOptonsList, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, summary, targetDir, toContinue;
+    checkCoffee();
     if (!fs.existsSync(CONFIG_PATH)) {
       consola.error(`\`${CONFIG_FILE}\` not found in this directory: ${CWD}`);
       consola.info('Please run `milkee --setup` to create a configuration file.');
