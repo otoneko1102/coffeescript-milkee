@@ -82,6 +82,8 @@ compile = () ->
 
     consola.box title: "Milkee Compilation Summary", message: summary.join('\n')
 
+    otherOptionStrings = []
+
     if options.bare
       otherOptionStrings.push "--bare"
       # consola.info "Option `bare` is selected."
@@ -127,8 +129,6 @@ compile = () ->
       commandParts.push "\"#{config.output}\""
 
     delete options.join
-
-    otherOptionStrings = []
 
     if milkeeOptions.refresh
       targetDir = path.join CWD, config.output
