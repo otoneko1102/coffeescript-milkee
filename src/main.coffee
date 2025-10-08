@@ -73,7 +73,7 @@ compile = () ->
     summary = []
     summary.push "Entry: `#{config.entry}`"
     summary.push "Output: `#{config.output}`"
-    enabledOptons = Object
+    enabledOptions = Object
       .keys options
       .filter (key) -> options[key]
     if enabledOptons.length > 0
