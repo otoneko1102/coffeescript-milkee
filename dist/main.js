@@ -81,7 +81,7 @@
   };
 
   compile = async function() {
-    var command, commandParts, compilerProcess, config, enabledOptons, enabledOptonsList, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, summary, targetDir, toContinue;
+    var command, commandParts, compilerProcess, config, enabledOptions, enabledOptionsList, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, summary, targetDir, toContinue;
     checkCoffee();
     if (!fs.existsSync(CONFIG_PATH)) {
       consola.error(`\`${CONFIG_FILE}\` not found in this directory: ${CWD}`);
@@ -112,6 +112,7 @@
         title: "Milkee Compilation Summary",
         message: summary.join('\n')
       });
+      otherOptionStrings = [];
       if (options.bare) {
         otherOptionStrings.push("--bare");
       }
@@ -162,7 +163,6 @@
         commandParts.push(`\"${config.output}\"`);
       }
       delete options.join;
-      otherOptionStrings = [];
       if (milkeeOptions.refresh) {
         targetDir = path.join(CWD, config.output);
         if (!fs.existsSync(targetDir)) {
