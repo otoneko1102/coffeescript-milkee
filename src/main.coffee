@@ -70,6 +70,13 @@ compile = () ->
     milkeeOptions = config.milkee.options or {}
     commandParts = ['coffee']
 
+    if options.join
+      commandParts.push '--join'
+      commandParts.push "\"#{config.output}\""
+    else
+      commandParts.push '--output'
+      commandParts.push "\"#{config.output}\""
+
     summary = []
     summary.push "Entry: `#{config.entry}`"
     summary.push "Output: `#{config.output}`"
@@ -120,13 +127,6 @@ compile = () ->
       toContinue = await consola.prompt "Do you want to continue?", type: "confirm"
       unless toContinue
         return
-
-    if options.join
-      commandParts.push '--join'
-      commandParts.push "\"#{config.output}\""
-    else
-      commandParts.push '--output'
-      commandParts.push "\"#{config.output}\""
 
     delete options.join
 
