@@ -112,6 +112,7 @@
         title: "Milkee Compilation Summary",
         message: summary.join('\n')
       });
+      otherOptionStrings = [];
       if (options.bare) {
         otherOptionStrings.push("--bare");
       }
@@ -162,7 +163,6 @@
         commandParts.push(`\"${config.output}\"`);
       }
       delete options.join;
-      otherOptionStrings = [];
       if (milkeeOptions.refresh) {
         targetDir = path.join(CWD, config.output);
         if (!fs.existsSync(targetDir)) {
