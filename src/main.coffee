@@ -17,7 +17,7 @@ checkCoffee = () ->
       pkgFile = fs.readFileSync PKG_PATH, 'utf-8'
       pkgData = JSON.parse pkgFile
       if pkgData.dependencies?.coffeescript or pkgData.devDependencies?.coffeescript
-        return resolve true
+        return
     catch error
       consola.warn "Could not parse `package.json`: #{error.message}"
 
