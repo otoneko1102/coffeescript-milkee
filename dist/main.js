@@ -30,7 +30,7 @@
         pkgFile = fs.readFileSync(PKG_PATH, 'utf-8');
         pkgData = JSON.parse(pkgFile);
         if (((ref = pkgData.dependencies) != null ? ref.coffeescript : void 0) || ((ref1 = pkgData.devDependencies) != null ? ref1.coffeescript : void 0)) {
-          return resolve(true);
+          return;
         }
       } catch (error1) {
         error = error1;
