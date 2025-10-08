@@ -1,6 +1,6 @@
 {
   "name": "milkee",
-  "version": "0.0.18",
+  "version": "0.1.0",
   "description": "A simple CoffeeScript build tool with coffee.config.js",
   "main": "dist/main.js",
   "bin": {
@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/otoneko1102/coffeescript-milkee#readme",
   "dependencies": {
+    "@milkee/d": "^0.1.0",
     "consola": "^3.4.2",
     "yargs": "^18.0.0"
   },
