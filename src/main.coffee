@@ -76,8 +76,8 @@ compile = () ->
     enabledOptions = Object
       .keys options
       .filter (key) -> options[key]
-    if enabledOptons.length > 0
-      enabledOptonsList = enabledOptions.join ','
+    if enabledOptions.length > 0
+      enabledOptionsList = enabledOptions.join ','
       summary.push "Options: #{enabledOptionsList}"
 
     consola.box title: "Milkee Compilation Summary", message: summary.join('\n')
