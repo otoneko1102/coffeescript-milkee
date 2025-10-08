@@ -1,3 +1,5 @@
+/** @type {import('@milkee/d').Config} */
+
 module.exports = {
   // The entry point for compilation.
   // This can be a single file or a directory.
