@@ -81,7 +81,7 @@
   };
 
   compile = async function() {
-    var command, commandParts, compilerProcess, config, enabledOptons, enabledOptonsList, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, summary, targetDir, toContinue;
+    var command, commandParts, compilerProcess, config, enabledOptions, enabledOptonsList, error, i, item, itemPath, items, len, milkee, milkeeOptions, options, otherOptionStrings, summary, targetDir, toContinue;
     checkCoffee();
     if (!fs.existsSync(CONFIG_PATH)) {
       consola.error(`\`${CONFIG_FILE}\` not found in this directory: ${CWD}`);
@@ -101,7 +101,7 @@
       summary = [];
       summary.push(`Entry: \`${config.entry}\``);
       summary.push(`Output: \`${config.output}\``);
-      enabledOptons = Object.keys(options).filter(function(key) {
+      enabledOptions = Object.keys(options).filter(function(key) {
         return options[key];
       });
       if (enabledOptons.length > 0) {
