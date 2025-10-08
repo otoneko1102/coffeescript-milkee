@@ -28,6 +28,7 @@ checkCoffee = () ->
 
 # async
 setup = () ->
+  checkCoffee()
   pstat = "created"
   stat = "create"
   if fs.existsSync CONFIG_PATH
@@ -51,6 +52,7 @@ setup = () ->
     consola.info "Template file may be missing from the package installation at `#{TEMPLATE_PATH}`"
 
 compile = () ->
+  checkCoffee()
   unless fs.existsSync CONFIG_PATH
     consola.error "`#{CONFIG_FILE}` not found in this directory: #{CWD}"
     consola.info 'Please run `milkee --setup` to create a configuration file.'
