@@ -23,8 +23,8 @@
   CONFIG_PATH = path.join(CWD, CONFIG_FILE);
 
   checkCoffee = function() {
-    var error, pkgData, pkgFile, ref, ref1;
-    PKG_PATH(path.join(CWD, 'package.json'));
+    var PKG_PATH, error, pkgData, pkgFile, ref, ref1;
+    PKG_PATH = path.join(CWD, 'package.json');
     if (fs.existsSync(PKG_PATH)) {
       try {
         pkgFile = fs.readFileSync(PKG_PATH, 'utf-8');
