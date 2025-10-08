@@ -11,7 +11,7 @@ CONFIG_FILE = 'coffee.config.js'
 CONFIG_PATH = path.join CWD, CONFIG_FILE
 
 checkCoffee = () ->
-  PKG_PATH  path.join CWD, 'package.json'
+  PKG_PATH = path.join CWD, 'package.json'
   if fs.existsSync PKG_PATH
     try
       pkgFile = fs.readFileSync PKG_PATH, 'utf-8'
