@@ -2,7 +2,7 @@
 
 module.exports = {
   // The entry point for compilation.
-  // This can be a single file or a directory.
+  // This can be a single file or a directory (e.g., 'src/' or 'src/app.coffee').
   entry: 'src',
   // The output for the compiled JavaScript files.
   // If 'options.join' is true, this should be a single file path (e.g., 'dist/app.js').
