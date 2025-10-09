@@ -18,7 +18,7 @@
 
   CWD = process.cwd();
 
-  CONFIG_FILE = 'coffee.config.js';
+  CONFIG_FILE = 'coffee.config.cjs';
 
   CONFIG_PATH = path.join(CWD, CONFIG_FILE);
 
@@ -53,7 +53,7 @@
     stat = "create";
     if (fs.existsSync(CONFIG_PATH)) {
       consola.warn(`\`${CONFIG_FILE}\` already exists in this directory.`);
-      check = (await consola.prompt("Do you want to reset `coffee.config.js`?", {
+      check = (await consola.prompt(`Do you want to reset \`${CONFIG_FILE}\`?`, {
         type: "confirm"
       }));
       if (!check) {
@@ -69,7 +69,7 @@
       }
     }
     try {
-      TEMPLATE_PATH = path.join(__dirname, '..', 'temp', 'coffee.config.js');
+      TEMPLATE_PATH = path.join(__dirname, '..', 'temp', CONFIG_FILE);
       CONFIG_TEMPLATE = fs.readFileSync(TEMPLATE_PATH, 'utf-8');
       fs.writeFileSync(CONFIG_PATH, CONFIG_TEMPLATE);
       return consola.success(`Successfully ${pstat} \`${CONFIG_FILE}\`!`);
@@ -222,11 +222,11 @@
 
   argv = yargs(hideBin(process.argv)).scriptName('milkee').usage('$0 [command]').option('setup', {
     alias: 's',
-    describe: 'Generate a default coffee.config.js',
+    describe: `Generate a default ${CONFIG_FILE}`,
     type: 'boolean'
   }).option('compile', {
     alias: 'c',
-    describe: 'Compile CoffeeScript based on coffee.config.js (default)',
+    describe: `Compile CoffeeScript based on ${CONFIG_FILE} (default)`,
     type: 'boolean'
   }).version('version', pkg.version).alias('v', 'version').help('help').alias('h', 'help').argv;
 
