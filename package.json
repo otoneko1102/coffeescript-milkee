@@ -1,7 +1,7 @@
 {
   "name": "milkee",
-  "version": "0.1.0",
-  "description": "A simple CoffeeScript build tool with coffee.config.js",
+  "version": "0.2.0",
+  "description": "A simple CoffeeScript build tool with coffee.config.cjs",
   "main": "dist/main.js",
   "bin": {
     "milkee": "bin/milkee.js"
@@ -17,6 +17,7 @@
   "keywords": [
     "coffee",
     "coffeescript",
+    "milkee",
     "build",
     "builder",
     "compile",
