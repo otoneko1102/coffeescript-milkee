@@ -87,12 +87,12 @@ compile = () ->
       enabledOptionsList = enabledOptions.join ','
       summary.push "Options: #{enabledOptionsList}"
 
-    consola.box title: "Milkee Compilation Summary", message: summary.join('\n')
+    consola.box title: "Milkee Compilation Summary", message: summary.join '\n'
 
     otherOptionStrings = []
 
     if options.bare
-      otherOptionStrings.push "--bare"
+      otherOptionStrings.push '--bare'
       # consola.info "Option `bare` is selected."
     if options.map
       otherOptionStrings.push '--map'
@@ -126,6 +126,7 @@ compile = () ->
     if milkeeOptions.confirm
       toContinue = await consola.prompt "Do you want to continue?", type: "confirm"
       unless toContinue
+        consola.info "Canceled."
         return
 
     delete options.join
@@ -175,16 +176,8 @@ compile = () ->
 argv = yargs hideBin process.argv
   .scriptName 'milkee'
   .usage '$0 [command]'
-  .option 'setup', {
-    alias: 's',
-    describe: "Generate a default #{CONFIG_FILE}",
-    type: 'boolean'
-  }
-  .option 'compile', {
-    alias: 'c',
-    describe: "Compile CoffeeScript based on #{CONFIG_FILE} (default)",
-    type: 'boolean'
-  }
+  .option 'setup', alias: 's', describe: "Generate a default #{CONFIG_FILE}", type: 'boolean'
+  .option 'compile', alias: 'c', describe: "Compile CoffeeScript based on #{CONFIG_FILE} (default)", type: 'boolean'
   .version 'version', pkg.version
   .alias 'v', 'version'
   .help 'help'
