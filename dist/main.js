@@ -121,7 +121,7 @@
       });
       otherOptionStrings = [];
       if (options.bare) {
-        otherOptionStrings.push("--bare");
+        otherOptionStrings.push('--bare');
       }
       // consola.info "Option `bare` is selected."
       if (options.map) {
@@ -159,6 +159,7 @@
           type: "confirm"
         }));
         if (!toContinue) {
+          consola.info("Canceled.");
           return;
         }
       }
