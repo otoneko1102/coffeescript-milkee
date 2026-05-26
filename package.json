@@ -52,6 +52,6 @@
     "execa": "^9.6.1",
     "milkee-plugin-prettier": "^1.0.0",
     "npm-check-updates": "^19.6.6",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.7"
   }
 }
