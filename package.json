@@ -43,7 +43,7 @@
     "yargs": "^18.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
+    "@babel/core": "^7.29.7",
     "@types/coffeescript": "^2.5.7",
     "@vitest/coverage-v8": "^4.1.0",
     "coffee-fmt": "^0.12.0",
