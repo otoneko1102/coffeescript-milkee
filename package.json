@@ -36,6 +36,9 @@
     "url": "https://github.com/otnc/coffeescript-milkee/issues"
   },
   "homepage": "https://milkee.org",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@milkee/d": "^0.3.0",
     "consola": "^3.4.2",
