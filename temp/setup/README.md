@@ -5,5 +5,5 @@
 ## Usage
 
 ```sh
-npm run build
+{{runBuild}}
 ```

@@ -17,13 +17,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          registry-url: "https://registry.npmjs.org"
+          registry-url: "https://registry.npmjs.org"{{setupPmStep}}
 
       - name: Install, Build, and Test
         run: |
-          npm ci
-          npm run build
-          npm test
+          {{installFrozen}}
+          {{runBuild}}
+          {{runTest}}
 
       - name: Commit dist directory (if changed)
         run: |

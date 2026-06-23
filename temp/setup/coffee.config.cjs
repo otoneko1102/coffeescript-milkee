@@ -24,6 +24,9 @@ module.exports = {
   },
   // (Optional) Additional options/plugins for the Milkee builder.
   milkee: {
+    // Package manager used in this project. Auto-detected, but can be overridden.
+    // Supported: 'npm' | 'pnpm' | 'yarn' | 'bun' | 'aube' | 'nub' | 'vlt' | 'bower'
+    packageManager: '{{packageManager}}',
     options: {
       // Ignore update notifications.
       // ignoreUpdate: false,

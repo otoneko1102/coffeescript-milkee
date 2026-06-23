@@ -1,6 +1,6 @@
 {
   "name": "milkee",
-  "version": "3.3.1",
+  "version": "4.0.0",
   "description": "A simple CoffeeScript build tool with coffee.config.cjs ☕",
   "main": "dist/main.js",
   "bin": {
@@ -36,6 +36,9 @@
     "url": "https://github.com/otnc/coffeescript-milkee/issues"
   },
   "homepage": "https://milkee.org",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@milkee/d": "^0.3.0",
     "consola": "^3.4.2",
