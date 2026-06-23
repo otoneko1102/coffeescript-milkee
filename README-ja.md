@@ -21,11 +21,18 @@
 Milkee をインストールします:  
 
 ```bash
-# グローバルインストール
+# npm
 npm i -g milkee
+# pnpm
+pnpm add -g milkee
+# yarn
+yarn global add milkee
+# bun
+bun add -g milkee
 
-# ローカルインストール
+# ローカルインストールの場合
 npm i -D milkee
+pnpm add -D milkee
 ```
 
 CoffeeScript と `@babel/core` が必要です。  
@@ -82,6 +89,9 @@ module.exports = {
   },
   // (任意) Milkee ビルダーの追加オプション / プラグイン。
   milkee: {
+    // 使用するパッケージマネージャー。ロックファイルや package.json から自動検出されます。
+    // 対応: 'npm' | 'pnpm' | 'yarn' | 'bun' | 'aube' | 'nub' | 'vlt' | 'bower'
+    // packageManager: 'npm',
     options: {
       // アップデート通知を無視します。
       // ignoreUpdate: false,
@@ -113,6 +123,19 @@ module.exports = {
 | `watch` | `boolean` | `false` | ファイル変更を監視してコマンドを再実行する |
 
 [CoffeeScript - command.coffee](https://coffeescript.org/annotated-source/command.html)  
+
+##### `milkee.packageManager` (パッケージマネージャー)
+
+Milkee はロックファイルや `package.json` の `packageManager` フィールドからパッケージマネージャーを自動検出します。明示的に指定することもできます。  
+
+| 検出元 | 優先度 |
+| :--- | :--- |
+| `coffee.config.cjs` の `milkee.packageManager` | 1位（最高） |
+| `package.json` の `packageManager` フィールド | 2位 |
+| ロックファイル（`pnpm-lock.yaml`、`yarn.lock`、`bun.lockb`、`vlt-lock.json`、`bower.json`） | 3位 |
+| デフォルト | `npm` |
+
+対応する値: `'npm'` `'pnpm'` `'yarn'` `'bun'` `'aube'` `'nub'` `'vlt'` `'bower'`
 
 ##### `milkee.options` (Milkee 固有オプション)
 

@@ -21,11 +21,18 @@ Official site: https://milkee.org
 Install Milkee:  
 
 ```bash
-# global installation
+# npm
 npm i -g milkee
+# pnpm
+pnpm add -g milkee
+# yarn
+yarn global add milkee
+# bun
+bun add -g milkee
 
 # or local installation
 npm i -D milkee
+pnpm add -D milkee
 ```
 
 CoffeeScript & @babel/core are required.  
@@ -82,6 +89,9 @@ module.exports = {
   },
   // (Optional) Additional options/plugins for the Milkee builder.
   milkee: {
+    // Package manager used in this project. Auto-detected from lock files and package.json.
+    // Supported: 'npm' | 'pnpm' | 'yarn' | 'bun' | 'aube' | 'nub' | 'vlt' | 'bower'
+    // packageManager: 'npm',
     options: {
       // Ignore update notifications.
       // ignoreUpdate: false,
@@ -113,6 +123,19 @@ These options are passed directly to the `coffee` compiler.
 | `watch` | `boolean` | `false` | watch scripts for changes and rerun commands |
 
 [CoffeeScript - command.coffee](https://coffeescript.org/annotated-source/command.html)  
+
+##### `milkee.packageManager` (Package Manager)
+
+Milkee auto-detects the package manager from lock files and the `packageManager` field in `package.json`. You can override it explicitly.  
+
+| Detection source | Priority |
+| :--- | :--- |
+| `milkee.packageManager` in `coffee.config.cjs` | 1st (highest) |
+| `packageManager` field in `package.json` | 2nd |
+| Lock file (`pnpm-lock.yaml`, `yarn.lock`, `bun.lockb`, `vlt-lock.json`, `bower.json`) | 3rd |
+| Default | `npm` |
+
+Supported values: `'npm'` `'pnpm'` `'yarn'` `'bun'` `'aube'` `'nub'` `'vlt'` `'bower'`
 
 ##### `milkee.options` (Milkee Specific Options)
 
