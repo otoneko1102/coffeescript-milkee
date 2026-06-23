@@ -7,29 +7,30 @@ consola = require 'consola'
 { CWD, CONFIG_PATH, CONFIG_FILE } = require '../lib/constants'
 { checkLatest, checkCoffee } = require '../lib/checks'
 { runPlugins } = require '../lib/plugins'
+{ detectPackageManager, getInstallCommand } = require '../lib/package-manager'
 confirmContinue = require '../options/confirm'
 { executeRefresh, restoreBackups, clearBackups } = require '../options/refresh'
 executeCopy = require '../options/copy'
 
 # async
-checkVersion = ->
+checkVersion = (config) ->
   cl = await checkLatest()
   if cl
+    pm = detectPackageManager CWD, config
+    globalCmd = getInstallCommand pm, 'milkee@latest', false, true
+    localCmd = getInstallCommand pm, 'milkee@latest', true, false
     action =
       await consola.prompt 'Do you want to update now?',
         type: 'select'
         options: [
           label: 'No (Skip)', value: 'skip', hint: 'Start compiling directly'
         ,
-          label: 'Yes (Global)', value: 'global', hint: 'npm i -g milkee@latest'
+          label: 'Yes (Global)', value: 'global', hint: globalCmd
         ,
-          label: 'Yes (Local)', value: 'local', hint: 'npm i -D milkee@latest'
+          label: 'Yes (Local)', value: 'local', hint: localCmd
         ]
     if action and action isnt 'skip'
-      installCmd = if action is 'global'
-        'npm i -g milkee@latest'
-      else
-        'npm i -D milkee@latest'
+      installCmd = if action is 'global' then globalCmd else localCmd
       consola.start 'Updating milkee...'
       await new Promise (resolve) ->
         cp = spawn installCmd, shell: true, stdio: 'inherit'
@@ -64,7 +65,7 @@ compile = ->
     milkeeOptions = config.milkee.options or {}
 
     unless milkeeOptions.ignoreUpdate
-      await checkVersion()
+      await checkVersion(config)
 
     execCommandParts = ['coffee']
     if options.join

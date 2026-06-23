@@ -4,6 +4,7 @@ path = require 'path'
 consola = require 'consola'
 
 { CWD, CONFIG_FILE } = require '../lib/constants'
+{ detectPackageManager, getInstallCommand, getInitCommand, getRunCommand } = require '../lib/package-manager'
 confirmContinue = require '../options/confirm'
 
 TEMPLATE_DIR = path.join __dirname, '..', '..', 'temp', 'setup'
@@ -25,7 +26,7 @@ ensureDir = (filePath) ->
     fs.mkdirSync dir, recursive: true
 
 # Copy template file
-copyTemplate = (src, dest) ->
+copyTemplate = (src, dest, replacements = {}) ->
   srcPath = path.join TEMPLATE_DIR, src
   destPath = path.join CWD, dest
 
@@ -35,6 +36,8 @@ copyTemplate = (src, dest) ->
 
   ensureDir destPath
   content = fs.readFileSync srcPath, 'utf-8'
+  for key, value of replacements
+    content = content.replace new RegExp("\\{\\{#{key}\\}\\}", 'g'), value
   fs.writeFileSync destPath, content
   consola.success "Created `#{dest}`"
   return true
@@ -70,13 +73,13 @@ updatePackageJson = ->
     return false
 
 # Initialize package.json if not exists
-initPackageJson = ->
+initPackageJson = (pm) ->
   pkgPath = path.join CWD, 'package.json'
 
   unless fs.existsSync pkgPath
     consola.start 'Initializing package.json...'
     try
-      execSync 'npm init', cwd: CWD, stdio: 'inherit'
+      execSync getInitCommand(pm), cwd: CWD, stdio: 'inherit'
       consola.success 'Created `package.json`'
     catch error
       consola.error 'Failed to create package.json:', error
@@ -84,7 +87,7 @@ initPackageJson = ->
   return true
 
 # Generate README.md
-generateReadme = ->
+generateReadme = (pm) ->
   pkgPath = path.join CWD, 'package.json'
   readmePath = path.join CWD, 'README.md'
   templatePath = path.join TEMPLATE_DIR, 'README.md'
@@ -101,6 +104,7 @@ generateReadme = ->
     readme = fs.readFileSync templatePath, 'utf-8'
     readme = readme.replace /\{\{name\}\}/g, name
     readme = readme.replace /\{\{description\}\}/g, description
+    readme = readme.replace /\{\{runBuild\}\}/g, getRunCommand pm, 'build'
 
     fs.writeFileSync readmePath, readme
     consola.success 'Created `README.md`'
@@ -111,13 +115,14 @@ generateReadme = ->
 
 # Main setup function
 setup = ->
+  pm = detectPackageManager CWD
   consola.box 'Milkee Project Setup'
   consola.info 'This will set up your project as a Milkee project.'
   consola.info ''
   consola.info 'The following actions will be performed:'
   pkgPath = path.join CWD, 'package.json'
   unless fs.existsSync pkgPath
-    consola.info '  0. Initialize package.json (npm init)'
+    consola.info "  0. Initialize package.json (#{getInitCommand pm})"
   consola.info '  1. Install dependencies (coffeescript, milkee)'
   consola.info '  2. Create template files:'
   for template in TEMPLATES
@@ -137,13 +142,13 @@ setup = ->
   consola.info ''
 
   # Initialize package.json if not exists
-  unless initPackageJson()
+  unless initPackageJson(pm)
     return
 
   # Install dependencies
   try
     consola.start 'Installing dependencies...'
-    execSync 'npm install -D coffeescript milkee', cwd: CWD, stdio: 'inherit'
+    execSync getInstallCommand(pm, 'coffeescript milkee', true), cwd: CWD, stdio: 'inherit'
     consola.success 'Dependencies installed!'
   catch error
     consola.error 'Failed to install dependencies:', error
@@ -162,7 +167,8 @@ setup = ->
       unless overwrite
         consola.info "Skipped `#{template.dest}`"
         continue
-    copyTemplate template.src, template.dest
+    replacements = if template.src is 'coffee.config.cjs' then { packageManager: pm } else {}
+    copyTemplate template.src, template.dest, replacements
 
   consola.info ''
 
@@ -179,18 +185,18 @@ setup = ->
       await consola.prompt 'README.md already exists. Overwrite?',
         type: 'confirm'
     if overwrite
-      generateReadme()
+      generateReadme(pm)
     else
       consola.info 'Skipped `README.md`'
   else
-    generateReadme()
+    generateReadme(pm)
 
   consola.info ''
   consola.success 'Milkee project setup complete!'
   consola.info ''
   consola.info 'Next steps:'
   consola.info '  1. Edit `src/main.coffee` to implement your code'
-  consola.info '  2. Run `npm run build` to compile'
+  consola.info "  2. Run `#{getRunCommand pm, 'build'}` to compile"
   consola.info '  3. Test your project locally'
 
 module.exports = setup

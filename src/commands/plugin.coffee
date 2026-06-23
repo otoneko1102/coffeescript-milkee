@@ -4,6 +4,7 @@ path = require 'path'
 consola = require 'consola'
 
 { CWD, CONFIG_FILE } = require '../lib/constants'
+{ detectPackageManager, getInstallCommand, getInitCommand, getRunCommand, getInstallFrozenCommand, getCiSetupStep } = require '../lib/package-manager'
 confirmContinue = require '../options/confirm'
 
 TEMPLATE_DIR = path.join __dirname, '..', '..', 'temp', 'plugin'
@@ -36,7 +37,7 @@ ensureDir = (filePath) ->
     fs.mkdirSync dir, recursive: true
 
 # Copy template file
-copyTemplate = (src, dest) ->
+copyTemplate = (src, dest, replacements = {}) ->
   srcPath = path.join TEMPLATE_DIR, src
   destPath = path.join CWD, dest
 
@@ -46,6 +47,8 @@ copyTemplate = (src, dest) ->
 
   ensureDir destPath
   content = fs.readFileSync srcPath, 'utf-8'
+  for key, value of replacements
+    content = content.replace new RegExp("\\{\\{#{key}\\}\\}", 'g'), value
   fs.writeFileSync destPath, content
   consola.success "Created `#{dest}`"
   return true
@@ -102,13 +105,13 @@ updatePackageJson = ->
     return false
 
 # Initialize package.json if not exists
-initPackageJson = ->
+initPackageJson = (pm) ->
   pkgPath = path.join CWD, 'package.json'
 
   unless fs.existsSync pkgPath
     consola.start 'Initializing package.json...'
     try
-      execSync 'npm init', cwd: CWD, stdio: 'inherit'
+      execSync getInitCommand(pm), cwd: CWD, stdio: 'inherit'
       consola.success 'Created `package.json`'
     catch error
       consola.error 'Failed to create package.json:', error
@@ -116,7 +119,7 @@ initPackageJson = ->
   return true
 
 # Generate README.md
-generateReadme = ->
+generateReadme = (pm) ->
   pkgPath = path.join CWD, 'package.json'
   readmePath = path.join CWD, 'README.md'
   templatePath = path.join TEMPLATE_DIR, 'README.md'
@@ -143,13 +146,14 @@ generateReadme = ->
 
 # Main plugin setup function
 plugin = ->
+  pm = detectPackageManager CWD
   consola.box 'Milkee Plugin Setup'
   consola.info 'This will set up your project as a Milkee plugin.'
   consola.info ''
   consola.info 'The following actions will be performed:'
   pkgPath = path.join CWD, 'package.json'
   unless fs.existsSync pkgPath
-    consola.info '  0. Initialize package.json (npm init)'
+    consola.info "  0. Initialize package.json (#{getInitCommand pm})"
   consola.info '  1. Install dependencies (consola, coffeescript, milkee)'
   consola.info '  2. Create template files:'
   for template in TEMPLATES
@@ -169,14 +173,14 @@ plugin = ->
   consola.info ''
 
   # Initialize package.json if not exists
-  unless initPackageJson()
+  unless initPackageJson(pm)
     return
 
   # Install dependencies
   try
     consola.start 'Installing dependencies...'
-    execSync 'npm install consola', cwd: CWD, stdio: 'inherit'
-    execSync 'npm install -D coffeescript milkee', cwd: CWD, stdio: 'inherit'
+    execSync getInstallCommand(pm, 'consola'), cwd: CWD, stdio: 'inherit'
+    execSync getInstallCommand(pm, 'coffeescript milkee', true), cwd: CWD, stdio: 'inherit'
     consola.success 'Dependencies installed!'
   catch error
     consola.error 'Failed to install dependencies:', error
@@ -195,7 +199,18 @@ plugin = ->
       unless overwrite
         consola.info "Skipped `#{template.dest}`"
         continue
-    copyTemplate template.src, template.dest
+    replacements = switch template.src
+      when 'coffee.config.cjs'
+        { packageManager: pm }
+      when 'publish.yml'
+        {
+          setupPmStep: getCiSetupStep pm
+          installFrozen: getInstallFrozenCommand pm
+          runBuild: getRunCommand pm, 'build'
+          runTest: getRunCommand pm, 'test'
+        }
+      else {}
+    copyTemplate template.src, template.dest, replacements
 
   consola.info ''
 
@@ -227,18 +242,18 @@ plugin = ->
       await consola.prompt 'README.md already exists. Overwrite?',
         type: 'confirm'
     if overwrite
-      generateReadme()
+      generateReadme(pm)
     else
       consola.info 'Skipped `README.md`'
   else
-    generateReadme()
+    generateReadme(pm)
 
   consola.info ''
   consola.success 'Milkee plugin setup complete!'
   consola.info ''
   consola.info 'Next steps:'
   consola.info '  1. Edit `src/main.coffee` to implement your plugin'
-  consola.info '  2. Run `npm run build` to compile'
+  consola.info "  2. Run `#{getRunCommand pm, 'build'}` to compile"
   consola.info '  3. Test your plugin locally'
 
 module.exports = plugin
